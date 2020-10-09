@@ -8,6 +8,7 @@ rds_conn = mysql.connector.connect(host='database-knight9.ckranbftnjbu.us-east-2
                                    user='admin', password='W136692850390d', database='Instacart')
 redshift_conn = psycopg2.connect('dbname=knight9 host=redshift-cluster-1.cae6ybtaoioy.us-east-2.redshift.amazonaws.com\
     port=5439 user=knight9 password=W136692850390d')
+redshift_cursor = redshift_conn.cursor()
 
 
 def ok(data={}, **kwargs):
@@ -40,14 +41,15 @@ def sql_query_from_rds(query):
         result = rds_cursor.fetchall()
         return ok({'columns': columns, 'result': result, 'time_cost': '%.5fs' % (end_t - start_t)})
     except Exception as e:
-        return error(data=['Error: {}'.format(e)], message='Error: {}'.format(e))
+        return error(data={'columns': ['Error message'], 'result': [['{}'.format(e)]], 'time_cost': 'N/A'},
+                     message='Error: {}'.format(e))
     finally:
         rds_cursor.close()
 
 
 def sql_query_from_redshift(query):
+    global redshift_cursor, redshift_conn
     try:
-        redshift_cursor = redshift_conn.cursor()
         start_t = time.time()
         redshift_cursor.execute(query)
         end_t = time.time()
@@ -55,9 +57,11 @@ def sql_query_from_redshift(query):
         result = redshift_cursor.fetchall()
         return ok({'columns': columns, 'result': result, 'time_cost': '%.5fs' % (end_t - start_t)})
     except Exception as e:
-        return error(data=['Error: {}'.format(e)], message='Error: {}'.format(e))
-    finally:
-        redshift_cursor.close()
+        redshift_conn = psycopg2.connect('dbname=knight9 host=redshift-cluster-1.cae6ybtaoioy.us-east-2.redshift.amazonaws.com\
+            port=5439 user=knight9 password=W136692850390d')
+        redshift_cursor = redshift_conn.cursor()
+        return error(data={'columns': ['Error message'], 'result': [['{}'.format(e)]], 'time_cost': 'N/A'},
+                     message='Error: {}'.format(e))
 
 
 @app.route('/sql/query', methods=['GET'])
@@ -71,4 +75,4 @@ def sql_query():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
+    app.run(host='0.0.0.0', port=9123)
