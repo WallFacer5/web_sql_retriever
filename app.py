@@ -39,10 +39,16 @@ def sql_query_from_rds(query):
         end_t = time.time()
         columns = rds_cursor.column_names
         result = rds_cursor.fetchall()
+        result = list(map(
+            lambda r: {columns[i]: r[i].decode() if isinstance(r[i], bytearray) or isinstance(r[i], bytes) else r[i] for
+                       i in range(len(columns))}, result))
         return ok({'columns': columns, 'result': result, 'time_cost': '%.5fs' % (end_t - start_t)})
     except Exception as e:
-        return error(data={'columns': ['Error message'], 'result': [['{}'.format(e)]], 'time_cost': 'N/A'},
-                     message='Error: {}'.format(e))
+        columns = ['Error message']
+        result = list(map(
+            lambda r: {columns[i]: r[i].decode() if isinstance(r[i], bytearray) or isinstance(r[i], bytes) else r[i] for
+                       i in range(len(columns))}, [['{}'.format(e)]]))
+        return error(data={'columns': columns, 'result': result, 'time_cost': 'N/A'}, message='Error: {}'.format(e))
     finally:
         rds_cursor.close()
 
@@ -55,16 +61,21 @@ def sql_query_from_redshift(query):
         end_t = time.time()
         columns = list(map(lambda c: c.name, redshift_cursor.description))
         result = redshift_cursor.fetchall()
+        result = list(map(lambda r: {columns[i]: r[i] for i in range(len(columns))}, result))
         return ok({'columns': columns, 'result': result, 'time_cost': '%.5fs' % (end_t - start_t)})
     except Exception as e:
-        redshift_conn = psycopg2.connect('dbname=knight9 host=redshift-cluster-1.cae6ybtaoioy.us-east-2.redshift.amazonaws.com\
+        redshift_conn = psycopg2.connect('dbname=knight9 \
+            host=redshift-cluster-1.cae6ybtaoioy.us-east-2.redshift.amazonaws.com \
             port=5439 user=knight9 password=W136692850390d')
         redshift_cursor = redshift_conn.cursor()
-        return error(data={'columns': ['Error message'], 'result': [['{}'.format(e)]], 'time_cost': 'N/A'},
-                     message='Error: {}'.format(e))
+        columns = ['Error message']
+        result = list(map(
+            lambda r: {columns[i]: r[i].decode() if isinstance(r[i], bytearray) or isinstance(r[i], bytes) else r[i] for
+                       i in range(len(columns))}, [['{}'.format(e)]]))
+        return error(data={'columns': columns, 'result': result, 'time_cost': 'N/A'}, message='Error: {}'.format(e))
 
 
-@app.route('/sql/query', methods=['GET'])
+@app.route('/sql/query', methods=['POST'])
 def sql_query():
     data = request.json
     db_type = data.get('db_type', 'rds')
