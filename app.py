@@ -5,7 +5,7 @@ import time
 
 app = Flask(__name__)
 rds_conn = mysql.connector.connect(host='database-knight9.ckranbftnjbu.us-east-2.rds.amazonaws.com', port=3306,
-                                   user='admin', password='W136692850390d', database='Instacart')
+                                   user='admin', password='W136692850390d')
 redshift_conn = psycopg2.connect('dbname=knight9 host=redshift-cluster-1.cae6ybtaoioy.us-east-2.redshift.amazonaws.com\
     port=5439 user=knight9 password=W136692850390d')
 redshift_cursor = redshift_conn.cursor()
@@ -38,6 +38,13 @@ def sql_query_from_rds(query):
         rds_cursor.execute(query)
         end_t = time.time()
         columns = rds_cursor.column_names
+        query_l = query.replace('\t', ' ').replace('\n', ' ').replace('\r', ' ').replace(';',
+                                                                                         ' ').strip().lower().split(' ')
+        query_l = list(filter(lambda x: x != '', query_l))
+        if query_l[0] == 'use':
+            return ok(
+                {'columns': ['Current database'], 'result': [{'Current database': query_l[1]}],
+                 'time_cost': '%.5fs' % (end_t - start_t)})
         result = rds_cursor.fetchall()
         result = list(map(
             lambda r: {columns[i]: r[i].decode() if isinstance(r[i], bytearray) or isinstance(r[i], bytes) else r[i] for
