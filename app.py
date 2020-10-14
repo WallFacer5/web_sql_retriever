@@ -37,7 +37,7 @@ def sql_query_from_rds(query):
         start_t = time.time()
         rds_cursor.execute(query)
         end_t = time.time()
-        columns = rds_cursor.column_names
+        columns = list(rds_cursor.column_names)
         query_l = query.replace('\t', ' ').replace('\n', ' ').replace('\r', ' ').replace(';',
                                                                                          ' ').strip().lower().split(' ')
         query_l = list(filter(lambda x: x != '', query_l))
@@ -49,13 +49,13 @@ def sql_query_from_rds(query):
         result = list(map(
             lambda r: {columns[i]: r[i].decode() if isinstance(r[i], bytearray) or isinstance(r[i], bytes) else r[i] for
                        i in range(len(columns))}, result))
-        return ok({'columns': columns, 'result': result, 'time_cost': '%.5fs' % (end_t - start_t)})
+        return ok({'columns': [columns[-1]] + columns[:-1], 'result': result, 'time_cost': '%.5fs' % (end_t - start_t)})
     except Exception as e:
         columns = ['Error message']
         result = list(map(
             lambda r: {columns[i]: r[i].decode() if isinstance(r[i], bytearray) or isinstance(r[i], bytes) else r[i] for
                        i in range(len(columns))}, [['{}'.format(e)]]))
-        return error(data={'columns': columns, 'result': result, 'time_cost': 'N/A'}, message='Error: {}'.format(e))
+        return error(data={'columns': [columns[-1]] + columns[:-1], 'result': result, 'time_cost': 'N/A'}, message='Error: {}'.format(e))
     finally:
         rds_cursor.close()
 
@@ -69,7 +69,7 @@ def sql_query_from_redshift(query):
         columns = list(map(lambda c: c.name, redshift_cursor.description))
         result = redshift_cursor.fetchall()
         result = list(map(lambda r: {columns[i]: r[i] for i in range(len(columns))}, result))
-        return ok({'columns': columns, 'result': result, 'time_cost': '%.5fs' % (end_t - start_t)})
+        return ok({'columns': [columns[-1]] + columns[:-1], 'result': result, 'time_cost': '%.5fs' % (end_t - start_t)})
     except Exception as e:
         redshift_conn = psycopg2.connect('dbname=knight9 \
             host=redshift-cluster-1.cae6ybtaoioy.us-east-2.redshift.amazonaws.com \
@@ -79,7 +79,7 @@ def sql_query_from_redshift(query):
         result = list(map(
             lambda r: {columns[i]: r[i].decode() if isinstance(r[i], bytearray) or isinstance(r[i], bytes) else r[i] for
                        i in range(len(columns))}, [['{}'.format(e)]]))
-        return error(data={'columns': columns, 'result': result, 'time_cost': 'N/A'}, message='Error: {}'.format(e))
+        return error(data={'columns': [columns[-1]] + columns[:-1], 'result': result, 'time_cost': 'N/A'}, message='Error: {}'.format(e))
 
 
 @app.route('/sql/query', methods=['POST'])

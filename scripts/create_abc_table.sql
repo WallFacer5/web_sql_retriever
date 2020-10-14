@@ -1,0 +1,54 @@
+CREATE TABLE Employee
+(
+  Employee_LastName VARCHAR(20) NOT NULL,
+  Employee_FirstName VARCHAR(20) NOT NULL,
+  Employee_Title VARCHAR(20) NOT NULL,
+  CompanyName VARCHAR(20) NOT NULL,
+  PRIMARY KEY (Employee_LastName),
+  UNIQUE (Employee_FirstName)
+);
+
+CREATE TABLE Product
+(
+  ProductName INT NOT NULL,
+  Order_UnitPrice INT NOT NULL,
+  PRIMARY KEY (ProductName)
+);
+
+CREATE TABLE Customer
+(
+  Customer_ContactName VARCHAR(20) NOT NULL,
+  Customer_City VARCHAR(20) NOT NULL,
+  Customer_Country VARCHAR(20) NOT NULL,
+  Customer_Phone VARCHAR(20) NOT NULL,
+  PRIMARY KEY (Customer_ContactName)
+);
+
+CREATE TABLE Order
+(
+  OrderID INT NOT NULL,
+  OrderDate DATE NOT NULL,
+  Order_ShippedDate DATE NOT NULL,
+  Order_Freight FLOAT NOT NULL,
+  Order_ShipCity VARCHAR(20) NOT NULL,
+  Order_ShipCountry VARCHAR(20) NOT NULL,
+  Employee_LastName VARCHAR(20) NOT NULL,
+  Customer_ContactName VARCHAR(20) NOT NULL,
+  PRIMARY KEY (OrderID),
+  FOREIGN KEY (Employee_LastName) REFERENCES Employee(Employee_LastName),
+  FOREIGN KEY (Customer_ContactName) REFERENCES Customer(Customer_ContactName)
+);
+
+CREATE TABLE Order_Product
+(
+  Order_Quantity INT NOT NULL,
+  Order_Amount FLOAT NOT NULL,
+  OrderID FLOAT NOT NULL,
+  ProductName VARCHAR(20) NOT NULL,
+  OrderID INT NOT NULL,
+  ProductName INT NOT NULL,
+  PRIMARY KEY (OrderID),
+  FOREIGN KEY (OrderID) REFERENCES Order(OrderID),
+  FOREIGN KEY (ProductName) REFERENCES Product(ProductName),
+  UNIQUE (ProductName)
+);
