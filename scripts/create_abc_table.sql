@@ -10,8 +10,8 @@ CREATE TABLE Employee
 
 CREATE TABLE Product
 (
-  ProductName INT NOT NULL,
-  Order_UnitPrice INT NOT NULL,
+  ProductName VARCHAR(20) NOT NULL,
+  Order_UnitPrice FLOAT NOT NULL,
   PRIMARY KEY (ProductName)
 );
 
@@ -24,7 +24,7 @@ CREATE TABLE Customer
   PRIMARY KEY (Customer_ContactName)
 );
 
-CREATE TABLE Order
+CREATE TABLE Orders
 (
   OrderID INT NOT NULL,
   OrderDate DATE NOT NULL,
@@ -39,16 +39,13 @@ CREATE TABLE Order
   FOREIGN KEY (Customer_ContactName) REFERENCES Customer(Customer_ContactName)
 );
 
-CREATE TABLE Order_Product
+CREATE TABLE Order_Products
 (
   Order_Quantity INT NOT NULL,
   Order_Amount FLOAT NOT NULL,
-  OrderID FLOAT NOT NULL,
-  ProductName VARCHAR(20) NOT NULL,
   OrderID INT NOT NULL,
-  ProductName INT NOT NULL,
-  PRIMARY KEY (OrderID),
-  FOREIGN KEY (OrderID) REFERENCES Order(OrderID),
-  FOREIGN KEY (ProductName) REFERENCES Product(ProductName),
-  UNIQUE (ProductName)
+  ProductName VARCHAR(20) NOT NULL,
+  PRIMARY KEY (OrderID, ProductName),
+  FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
+  FOREIGN KEY (ProductName) REFERENCES Product(ProductName)
 );
