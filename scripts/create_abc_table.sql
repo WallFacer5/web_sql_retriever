@@ -1,3 +1,9 @@
+drop table Order_Products;
+drop table Orders;
+drop table Customer;
+drop table Product;
+drop table Employee;
+
 CREATE TABLE Employee
 (
   Employee_LastName VARCHAR(20) NOT NULL,
@@ -27,8 +33,8 @@ CREATE TABLE Customer
 CREATE TABLE Orders
 (
   OrderID INT NOT NULL,
-  OrderDate DATE NOT NULL,
-  Order_ShippedDate DATE NOT NULL,
+  OrderDate DATETIME NOT NULL,
+  Order_ShippedDate DATETIME NOT NULL,
   Order_Freight FLOAT NOT NULL,
   Order_ShipCity VARCHAR(20) NOT NULL,
   Order_ShipCountry VARCHAR(20) NOT NULL,

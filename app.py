@@ -57,7 +57,11 @@ def sql_query_from_rds(query):
                        i in range(len(columns))}, [['{}'.format(e)]]))
         return error(data={'columns': [columns[-1]] + columns[:-1], 'result': result, 'time_cost': 'N/A'}, message='Error: {}'.format(e))
     finally:
-        rds_cursor.close()
+        try:
+            rds_cursor.close()
+        except Exception as e:
+            print(e)
+            pass
 
 
 def sql_query_from_redshift(query):
