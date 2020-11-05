@@ -1,0 +1,2 @@
+mysql -h database-knight9.ckranbftnjbu.us-east-2.rds.amazonaws.com -P 3306 -u admin --local-infile -pW136692850390d -D Instacart < scripts/create_instacart_kv.sql
+mysql -h database-knight9.ckranbftnjbu.us-east-2.rds.amazonaws.com -P 3306 -u admin --local-infile -pW136692850390d -D Instacart < scripts/load_instacart_kv.sql
