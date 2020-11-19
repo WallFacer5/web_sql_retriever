@@ -366,7 +366,7 @@ ORDER BY
 -- Windowing
 SELECT 
 	ThisQuarter, Region, Sales
-	, AVG(Sales) OVER (PARTITION BY Region ORDER BY ThisQuarter) AS Sales_Avg
+	, AVG(Sales) OVER (PARTITION BY Region ORDER BY ThisQuarter) AS Sales_Avg
 FROM 
 	MyCube
 ORDER BY 

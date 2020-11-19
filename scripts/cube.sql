@@ -23,6 +23,7 @@ CREATE TABLE ABC_Retail
 
 load data local infile 'ABC_Retail.txt' into table ABC_Retail fields terminated by '\t' lines terminated by '\n' ignore 1 lines;
 
+--the code in the assignment instruction
 select
     year(OrderDate) as ThisYear,
     Order_ShipCountry as Region,
@@ -36,6 +37,7 @@ where
     Order_ShipCountry in ('USA','Canada','UK')
     and ProductName in ('Chai','Tofu','Chocolade');
 
+--Our code
 create table MyCube
 (
     select
