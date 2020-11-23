@@ -11,6 +11,17 @@ begin
     deallocate prepare stmt;
 end //
 
+--sample statement
+select avg(Sales) from
+(
+select (@row_num := @row_num + 1) as line, Sales
+from
+(select Sales from MyCube order by Sales) mid_t1, (select @row_num := 0) r
+) mid_t2
+where line between
+floor((@row_num + 1) / 2) and floor((@row_num + 2) / 2)
+;
+
 create procedure percent_get(tb varchar(30), col varchar(30), pct float, save_name varchar(30))
 begin
     set @stmt=concat('set @', save_name, '=(select ', col, ' from ', tb, ' order by abs(PERCENT_RANK() OVER (ORDER BY ',
@@ -19,6 +30,10 @@ begin
     execute stmt;
     deallocate prepare stmt;
 end //
+
+--sample statement
+select Sales
+from MyCube order by abs(PERCENT_RANK() OVER (ORDER BY Sales ASC)-0.25);
 
 create procedure Q1(tb varchar(30), col varchar(30))
 begin
