@@ -1,0 +1,46 @@
++------------------------+
+| COLUMN_NAME            |
++------------------------+
+| order_id               |
+| user_id                |
+| order_number           |
+| order_dow              |
+| order_hour_of_day      |
+| days_since_prior_order |
+| aisle_id               |
+| aisle                  |
+| department_id          |
+| department             |
+| product_id             |
+| product_name           |
+| add_to_cart_order      |
+| reordered              |
+| Employee_LastName      |
+| Employee_FirstName     |
+| Employee_Title         |
+| CompanyName            |
+| ProductName            |
+| Order_UnitPrice        |
+| Customer_ContactName   |
+| Customer_City          |
+| Customer_Country       |
+| Customer_Phone         |
+| OrderID                |
+| OrderDate              |
+| Order_ShippedDate      |
+| Order_Freight          |
+| Order_ShipCity         |
+| Order_ShipCountry      |
+| Order_Quantity         |
+| Order_Amount           |
+| PRODUCT                |
+| QUARTER                |
+| REGION                 |
+| SALES                  |
+| k                      |
+| v                      |
+| ThisYear               |
+| O_Ring_failure         |
+| Launch_temperature     |
+| Leak_check_pressure    |
++------------------------+

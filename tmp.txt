@@ -1,0 +1,20 @@
++-------------------+
+| TABLE_NAME        |
++-------------------+
+| ABC_Retail        |
+| Challenger        |
+| MyCube            |
+| SALES             |
+| kv_new            |
+| kv_test           |
+| AISLES            |
+| AISLES_KV         |
+| DEPARTMENTS       |
+| DEPARTMENTS_KV    |
+| ORDERS            |
+| ORDERS_KV         |
+| Order_Products    |
+| Order_Products_KV |
+| PRODUCTS          |
+| PRODUCTS_KV       |
++-------------------+
