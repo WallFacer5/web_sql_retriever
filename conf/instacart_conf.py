@@ -37,3 +37,7 @@ def map_operator(operator):
 
 def map_aggregation(aggr):
     return aggregation_map.get(aggr, aggr)
+
+
+def map_order_seq(order_seq):
+    return 'desc' if order_seq == 'descending' else ''

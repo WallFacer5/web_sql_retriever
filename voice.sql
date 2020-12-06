@@ -1,0 +1,2 @@
+select department id count product id from products where department id is smaller than 10 group by department id having count product id is greater than 20 order by count product id desc limit 20
+select department id count product id from products group by department id

@@ -15,6 +15,7 @@ redshift_cursor = redshift_conn.cursor()
 current_columns = []
 current_result = []
 current_time_cost = 'N/A'
+current_query = ''
 
 
 def ok(data={}, **kwargs):
@@ -38,7 +39,8 @@ def error(message='error', status=-1, data={}, **kwargs):
 
 
 def sql_query_from_rds(query):
-    global rds_conn, current_columns, current_result, current_time_cost
+    global rds_conn, current_columns, current_result, current_time_cost, current_query
+    current_query = query
     try:
         rds_cursor = rds_conn.cursor()
         start_t = time.time()
@@ -59,7 +61,7 @@ def sql_query_from_rds(query):
         current_columns = [columns[-1]] + columns[:-1]
         current_result = result
         current_time_cost = '%.5fs' % (end_t - start_t)
-        return ok({'columns': current_columns, 'result': result, 'time_cost': current_time_cost})
+        return ok({'columns': current_columns, 'result': result, 'time_cost': current_time_cost, 'query': query})
     except Exception as e:
         columns = ['Error message']
         result = list(map(
@@ -68,7 +70,8 @@ def sql_query_from_rds(query):
         current_columns = [columns[-1]] + columns[:-1]
         current_result = result
         current_time_cost = 'N/A'
-        return error(data={'columns': current_columns, 'result': result, 'time_cost': 'N/A'}, message='Error: {}'.format(e))
+        return error(data={'columns': current_columns, 'result': result, 'time_cost': 'N/A', 'query': query},
+                     message='Error: {}'.format(e))
     finally:
         try:
             rds_cursor.close()
@@ -96,7 +99,8 @@ def sql_query_from_redshift(query):
         result = list(map(
             lambda r: {columns[i]: r[i].decode() if isinstance(r[i], bytearray) or isinstance(r[i], bytes) else r[i] for
                        i in range(len(columns))}, [['{}'.format(e)]]))
-        return error(data={'columns': [columns[-1]] + columns[:-1], 'result': result, 'time_cost': 'N/A'}, message='Error: {}'.format(e))
+        return error(data={'columns': [columns[-1]] + columns[:-1], 'result': result, 'time_cost': 'N/A'},
+                     message='Error: {}'.format(e))
 
 
 @app.route('/sql/query', methods=['POST'])
@@ -119,6 +123,9 @@ def sql_test():
 def generate_sql_statement(slots):
     attribute = slots.get('attribute', {}).get('value', 'star')
     attribute = '*' if attribute == 'star' else map_attr(attribute)
+    attribute_b = map_attr(slots.get('attribute_b', {}).get('value', None))
+    attribute_c = map_attr(slots.get('attribute_c', {}).get('value', None))
+    attributes = ', '.join(filter(lambda a: a, [attribute, attribute_b, attribute_c]))
     aggregate = map_aggregation(slots.get('aggregate', {}).get('value', None))
     attribute_aggr = map_attr(slots.get('attribute_aggr', {}).get('value', None))
     table = map_table(slots.get('table', {}).get('value', '<tb>'))
@@ -127,32 +134,50 @@ def generate_sql_statement(slots):
     number_cond = slots.get('number_cond', {}).get('value', None)
     attribute_group_by = map_attr(slots.get('attribute_group_by', {}).get('value', None))
     attribute_order_by = map_attr(slots.get('attribute_order_by', {}).get('value', None))
-    number_limit = slots.get('number_limit', {}).get('value', 20)
+    number_limit = slots.get('number_limit', {}).get('value', None)
+    attribute_having = map_attr(slots.get('attribute_having', {}).get('value', None))
+    having_op = map_operator(slots.get('having_op', {}).get('value', None))
+    number_having = slots.get('number_having', {}).get('value', None)
+    aggregate_having = map_aggregation(slots.get('aggregate_having', {}).get('value', None))
+    aggregate_order = map_aggregation(slots.get('aggregate_order', {}).get('value', None))
+    order_seq = map_order_seq(slots.get('order_seq', {}).get('value', ''))
+    if not number_limit:
+        number_limit = '20'
     if not attribute_group_by:
-        select_part = 'select {} from {}'.format(attribute, table)
+        select_part = 'select {} from {}'.format(attributes, table)
         if attribute_cond and where_op and number_cond:
             where_part = 'where {} {} {}'.format(attribute_cond, where_op, number_cond)
         else:
             where_part = ''
         if attribute_order_by:
-            order_by_part = 'order by {}'.format(attribute_order_by)
+            order_by_part = 'order by {} {}'.format(attribute_order_by, order_seq)
         else:
             order_by_part = ''
         limit_part = 'limit {}'.format(number_limit)
         statement = ' '.join([select_part, where_part, order_by_part, limit_part])
     else:
-        select_part = 'select {}, {}({}) from {}'.format(attribute, aggregate, attribute_aggr, table)
+        select_part = 'select {}, {}({}) from {}'.format(attributes, aggregate, attribute_aggr, table)
         if attribute_cond and where_op and number_cond:
             where_part = 'where {} {} {}'.format(attribute_cond, where_op, number_cond)
         else:
             where_part = ''
         group_by_part = 'group by {}'.format(attribute_group_by)
+        if attribute_having:
+            if aggregate_having:
+                having_part = 'having {}({}) {} {}'.format(aggregate_having, attribute_having, having_op, number_having)
+            else:
+                having_part = 'having {} {} {}'.format(attribute_having, having_op, number_having)
+        else:
+            having_part = ''
         if attribute_order_by:
-            order_by_part = 'order by {}'.format(attribute_order_by)
+            if aggregate_order:
+                order_by_part = 'order by {}({}) {}'.format(aggregate_order, attribute_order_by, order_seq)
+            else:
+                order_by_part = 'order by {} {}'.format(attribute_order_by, order_seq)
         else:
             order_by_part = ''
         limit_part = 'limit {}'.format(number_limit)
-        statement = ' '.join([select_part, where_part, group_by_part, order_by_part, limit_part])
+        statement = ' '.join([select_part, where_part, group_by_part, having_part, order_by_part, limit_part])
     return statement
 
 
@@ -168,7 +193,8 @@ def sql_query_by_voice():
 
 @app.route('/sql/sync_results', methods=['GET'])
 def sql_sync_results():
-    return ok({'columns': current_columns, 'result': current_result, 'time_cost': current_time_cost})
+    return ok(
+        {'columns': current_columns, 'result': current_result, 'time_cost': current_time_cost, 'query': current_query})
 
 
 if __name__ == '__main__':
