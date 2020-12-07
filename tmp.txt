@@ -1,20 +1,57 @@
-+-------------------+
-| TABLE_NAME        |
-+-------------------+
-| ABC_Retail        |
-| Challenger        |
-| MyCube            |
-| SALES             |
-| kv_new            |
-| kv_test           |
-| AISLES            |
-| AISLES_KV         |
-| DEPARTMENTS       |
-| DEPARTMENTS_KV    |
-| ORDERS            |
-| ORDERS_KV         |
-| Order_Products    |
-| Order_Products_KV |
-| PRODUCTS          |
-| PRODUCTS_KV       |
-+-------------------+
+give me all the {table}
+I want to get {attribute} and {attribute_b} of all the {table}
+I want to get {attribute} of all the {table}
+could you please give me the {attribute} and the {attribute_b} of the {table}
+select {attribute} from {table}
+select {attribute} {attribute_b} from {table}
+select {attribute} {attribute_b} {attribute_c} from {table}
+select {attribute} from {table} limit {number_limit}
+select {attribute} {attribute_b} from {table} limit {number_limit}
+select {attribute} {attribute_b} {attribute_c} from {table} limit {number_limit}
+select {attribute} from {table} where {attribute_cond} {where_op} {number_cond}
+select {attribute} {attribute_b} from {table} where {attribute_cond} {where_op} {number_cond}
+select {attribute} {attribute_b} {attribute_c} from {table} where {attribute_cond} {where_op} {number_cond}
+select {attribute} from {table} where {attribute_cond} {where_op} {number_cond} limit {number_limit}
+select {attribute} {attribute_b} from {table} where {attribute_cond} {where_op} {number_cond} limit {number_limit}
+select {attribute} {attribute_b} {attribute_c} from {table} where {attribute_cond} {where_op} {number_cond} limit {number_limit}
+select {attribute} from {table} order by {attribute_order_by}
+select {attribute} {attribute_b} from {table} order by {attribute_order_by}
+select {attribute} {attribute_b} {attribute_c} from {table} order by {attribute_order_by}
+select {attribute} from {table} order by {attribute_order_by} limit {number_limit}
+select {attribute} {attribute_b} from {table} order by {attribute_order_by} limit {number_limit}
+select {attribute} {attribute_b} {attribute_c} from {table} order by {attribute_order_by} limit {number_limit}
+select {attribute} from {table} where {attribute_cond} {where_op} {number_cond} order by {attribute_order_by} limit {number_limit}
+select {attribute} {attribute_b} from {table} where {attribute_cond} {where_op} {number_cond} order by {attribute_order_by} limit {number_limit}
+select {attribute} {attribute_b} {attribute_c} from {table} where {attribute_cond} {where_op} {number_cond} order by {attribute_order_by} limit {number_limit}
+select {attribute} from {table} order by {attribute_order_by} {order_seq}
+select {attribute} {attribute_b} from {table} order by {attribute_order_by} {order_seq}
+select {attribute} {attribute_b} {attribute_c} from {table} order by {attribute_order_by} {order_seq}
+select {attribute} from {table} order by {attribute_order_by} {order_seq} limit {number_limit}
+select {attribute} {attribute_b} from {table} order by {attribute_order_by} {order_seq} limit {number_limit}
+select {attribute} {attribute_b} {attribute_c} from {table} order by {attribute_order_by} {order_seq} limit {number_limit}
+select {attribute} from {table} where {attribute_cond} {where_op} {number_cond} order by {attribute_order_by} {order_seq} limit {number_limit}
+select {attribute} {attribute_b} from {table} where {attribute_cond} {where_op} {number_cond} order by {attribute_order_by} {order_seq} limit {number_limit}
+select {attribute} {attribute_b} {attribute_c} from {table} where {attribute_cond} {where_op} {number_cond} order by {attribute_order_by} {order_seq} limit {number_limit}
+select {attribute} {aggregate} {attribute_aggr} from {table} group by {attribute_group_by}
+select {attribute} {attribute_b} {aggregate} {attribute_aggr} from {table} group by {attribute_group_by}
+select {attribute} {attribute_b} {attribute_c} {aggregate} {attribute_aggr} from {table} group by {attribute_group_by}
+select {attribute} {aggregate} {attribute_aggr} from {table} group by {attribute_group_by} having {attribute_having} {having_op} {number_having}
+select {attribute} {attribute_b} {aggregate} {attribute_aggr} from {table} group by {attribute_group_by} having {attribute_having} {having_op} {number_having}
+select {attribute} {attribute_b} {attribute_c} {aggregate} {attribute_aggr} from {table} group by {attribute_group_by} having {attribute_having} {having_op} {number_having}
+select {attribute} {aggregate} {attribute_aggr} from {table} group by {attribute_group_by} having {aggregate_having} {attribute_having} {having_op} {number_having}
+select {attribute} {attribute_b} {aggregate} {attribute_aggr} from {table} group by {attribute_group_by} having {aggregate_having} {attribute_having} {having_op} {number_having}
+select {attribute} {attribute_b} {attribute_c} {aggregate} {attribute_aggr} from {table} group by {attribute_group_by} having {aggregate_having} {attribute_having} {having_op} {number_having}
+select {attribute} {aggregate} {attribute_aggr} from {table} group by {attribute_group_by} order by {attribute_order_by}
+select {attribute} {attribute_b} {aggregate} {attribute_aggr} from {table} group by {attribute_group_by} order by {attribute_order_by}
+select {attribute} {attribute_b} {attribute_c} {aggregate} {attribute_aggr} from {table} group by {attribute_group_by} order by {attribute_order_by}
+select {attribute} {aggregate} {attribute_aggr} from {table} group by {attribute_group_by} order by {attribute_order_by} {order_seq}
+select {attribute} {attribute_b} {aggregate} {attribute_aggr} from {table} group by {attribute_group_by} order by {attribute_order_by} {order_seq}
+select {attribute} {attribute_b} {attribute_c} {aggregate} {attribute_aggr} from {table} group by {attribute_group_by} order by {attribute_order_by} {order_seq}
+select {attribute} {aggregate} {attribute_aggr} from {table} group by {attribute_group_by} order by {aggregate_order} {attribute_order_by}
+select {attribute} {attribute_b} {aggregate} {attribute_aggr} from {table} group by {attribute_group_by} order by {aggregate_order} {attribute_order_by}
+select {attribute} {attribute_b} {attribute_c} {aggregate} {attribute_aggr} from {table} group by {attribute_group_by} order by {aggregate_order} {attribute_order_by}
+select {attribute} {aggregate} {attribute_aggr} from {table} group by {attribute_group_by} order by {aggregate_order} {attribute_order_by} {order_seq}
+select {attribute} {attribute_b} {aggregate} {attribute_aggr} from {table} group by {attribute_group_by} order by {aggregate_order} {attribute_order_by} {order_seq}
+select {attribute} {attribute_b} {attribute_c} {aggregate} {attribute_aggr} from {table} group by {attribute_group_by} order by {aggregate_order} {attribute_order_by} {order_seq}
+select  {attribute} {aggregate} {attribute_aggr} from {table} where {attribute_cond} {where_op} {number_cond} group by {attribute_group_by} having {aggregate_having} {attribute_having} {having_op} {number_having} order by {aggregate_order} {attribute_order_by} {order_seq} limit {number_limit}
+select  {attribute} {aggregate} {attribute_aggr} from {table} where {attribute_cond} {where_op} {number_cond} group by {attribute_group_by} having {attribute_having} {having_op} {number_having} order by {attribute_order_by} limit {number_limit}

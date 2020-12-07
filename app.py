@@ -122,7 +122,7 @@ def sql_test():
 
 def generate_sql_statement(slots):
     attribute = slots.get('attribute', {}).get('value', 'star')
-    attribute = '*' if attribute == 'star' else map_attr(attribute)
+    attribute = '*' if attribute in ('star', None) else map_attr(attribute)
     attribute_b = map_attr(slots.get('attribute_b', {}).get('value', None))
     attribute_c = map_attr(slots.get('attribute_c', {}).get('value', None))
     attributes = ', '.join(filter(lambda a: a, [attribute, attribute_b, attribute_c]))
@@ -140,7 +140,7 @@ def generate_sql_statement(slots):
     number_having = slots.get('number_having', {}).get('value', None)
     aggregate_having = map_aggregation(slots.get('aggregate_having', {}).get('value', None))
     aggregate_order = map_aggregation(slots.get('aggregate_order', {}).get('value', None))
-    order_seq = map_order_seq(slots.get('order_seq', {}).get('value', ''))
+    order_seq = slots.get('order_seq', {}).get('value', '')
     if not number_limit:
         number_limit = '20'
     if not attribute_group_by:
@@ -189,6 +189,14 @@ def sql_query_by_voice():
     sql_statement = generate_sql_statement(slots)
     print('Generated sql: {}'.format(sql_statement))
     return sql_query_from_rds(sql_statement)
+
+
+@app.route('/sql/desc_by_voice', methods=['POST'])
+def sql_desc_by_voice():
+    data = request.json
+    table = map_table(data['query'])
+    print('Desc sql: desc {}'.format(table))
+    return sql_query_from_rds('desc {}'.format(table))
 
 
 @app.route('/sql/sync_results', methods=['GET'])
