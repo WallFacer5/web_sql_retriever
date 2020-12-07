@@ -24,6 +24,8 @@ delimiter ;
 
 --sample query
 
+call KNN('Challenger', 'O_Ring_failure', 'Launch_temperature', 30, 1);
+
 select O_Ring_failure, abs(Launch_temperature-30) as distance from Challenger order by distance limit 5;
 
 select O_Ring_failure from
